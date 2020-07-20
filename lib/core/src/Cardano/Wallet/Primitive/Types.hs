@@ -93,6 +93,8 @@ module Cardano.Wallet.Primitive.Types
     , NetworkParameters (..)
     , GenesisParameters (..)
     , ProtocolParameters (..)
+    , EraTransitionInfo (..)
+   -- , EraTransition (..)
     , TxParameters (..)
     , ActiveSlotCoefficient (..)
     , DecentralizationLevel (..)
@@ -1375,6 +1377,14 @@ newtype ActiveSlotCoefficient
 
 instance NFData ActiveSlotCoefficient
 
+data EraTransitionInfo = ByronToShelley
+    deriving (Eq, Bounded, Enum, Generic, Show)
+
+instance ToText EraTransitionInfo where
+    toText = toTextFromBoundedEnum SnakeLowerCase
+
+instance FromText EraTransitionInfo where
+    fromText = fromTextToBoundedEnum SnakeLowerCase
 
 -- | Protocol parameters that can be changed through the update system.
 --

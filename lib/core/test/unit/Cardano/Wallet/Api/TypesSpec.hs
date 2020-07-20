@@ -125,6 +125,7 @@ import Cardano.Wallet.Primitive.Types
     , Coin (..)
     , Direction (..)
     , EpochNo (..)
+    , EraTransitionInfo (..)
     , Hash (..)
     , HistogramBar (..)
     , PoolId (..)
@@ -1218,7 +1219,8 @@ instance Arbitrary (Quantity "percent" Double) where
 instance Arbitrary ApiEraTransition where
     arbitrary = do
         epoch <- oneof [pure Nothing, Just <$> arbitrary]
-        pure $ ApiEraTransition ByronToShelley epoch
+        let byronToShelley = ApiEraTransitionInfo $ ApiT ByronToShelley
+        pure $ ApiEraTransition byronToShelley epoch
 
 instance {-# OVERLAPS #-} Arbitrary [ApiEraTransition] where
     arbitrary = oneof [ pure [], L.replicate 1 <$> arbitrary ]

@@ -165,6 +165,7 @@ import Cardano.Wallet.Primitive.Types
     , Direction (..)
     , EpochLength (..)
     , EpochNo (..)
+    , EraTransitionInfo (..)
     , GenesisParameters (..)
     , Hash (..)
     , NetworkParameters (..)
@@ -506,8 +507,9 @@ data ApiFee = ApiFee
     , estimatedMax :: !(Quantity "lovelace" Natural)
     } deriving (Eq, Generic, Show)
 
-data ApiEraTransitionInfo = ByronToShelley
-    deriving (Eq, Bounded, Enum, Generic, Show)
+newtype ApiEraTransitionInfo = ApiEraTransitionInfo
+    { transitionInfo :: (ApiT EraTransitionInfo)
+    } deriving (Eq, Generic, Show)
 
 data ApiEraTransition = ApiEraTransition
     { transition :: !ApiEraTransitionInfo
@@ -1304,9 +1306,10 @@ instance ToJSON (ApiT (Hash "Genesis")) where
     toJSON = toJSON . toText . getApiT
 
 instance FromJSON ApiEraTransitionInfo where
-    parseJSON = parseJSON >=> eitherToParser . first ShowFmt . fromText
+    parseJSON = parseJSON >=>
+        eitherToParser . bimap ShowFmt (ApiEraTransitionInfo . ApiT) . fromText
 instance ToJSON ApiEraTransitionInfo where
-    toJSON = toJSON . toText
+    toJSON (ApiEraTransitionInfo (ApiT info))= toJSON $ toText info
 
 instance FromJSON ApiEraTransition where
     parseJSON = genericParseJSON defaultRecordTypeOptions
@@ -1399,11 +1402,6 @@ instance ToJSON ApiWalletDiscovery where
 {-------------------------------------------------------------------------------
                              FromText/ToText instances
 -------------------------------------------------------------------------------}
-instance ToText ApiEraTransitionInfo where
-    toText = toTextFromBoundedEnum SnakeLowerCase
-
-instance FromText ApiEraTransitionInfo where
-    fromText = fromTextToBoundedEnum SnakeLowerCase
 
 instance FromText (AddressAmount Text) where
     fromText text = do
