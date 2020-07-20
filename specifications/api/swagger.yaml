@@ -823,6 +823,17 @@ components:
         network_tip: *ApiNetworkTip
         next_epoch: *epochInfo
 
+    ApiEraTransition: &ApiEraTransition
+      type: object
+      required:
+        - transition
+      properties:
+        transition:
+          type: string
+          enum:
+            - byron_to_shelley
+        occurs_at: *epochInfo
+
     ApiNetworkClock: &ApiNetworkClock
       <<: *networkInformationNtpStatus
 
@@ -838,6 +849,7 @@ components:
         - decentralization_level
         - desired_pool_number
         - minimum_utxo_value
+        - era_transitions
       properties:
         genesis_block_hash: *blockId
         blockchain_start_time: *date
@@ -848,6 +860,7 @@ components:
         decentralization_level: *percentage
         desired_pool_number: *stakePoolsNumber
         minimum_utxo_value: *amount
+        era_transitions: *ApiEraTransition
 
     ApiSelectCoinsData: &ApiSelectCoinsData
       type: object
