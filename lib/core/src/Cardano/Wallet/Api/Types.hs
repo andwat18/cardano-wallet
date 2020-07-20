@@ -75,6 +75,8 @@ module Cardano.Wallet.Api.Types
     , MinWithdrawal (..)
     , ApiNetworkParameters (..)
     , toApiNetworkParameters
+    , ApiEraTransition (..)
+    , ApiEraTransitionInfo (..)
     , ApiWalletDelegation (..)
     , ApiWalletDelegationStatus (..)
     , ApiWalletDelegationNext (..)
@@ -504,6 +506,14 @@ data ApiFee = ApiFee
     , estimatedMax :: !(Quantity "lovelace" Natural)
     } deriving (Eq, Generic, Show)
 
+data ApiEraTransitionInfo = ByronToShelley
+    deriving (Eq, Bounded, Enum, Generic, Show)
+
+data ApiEraTransition = ApiEraTransition
+    { transition :: !ApiEraTransitionInfo
+    , occursAt :: !(Maybe ApiEpochInfo)
+    } deriving (Eq, Generic, Show)
+
 data ApiNetworkParameters = ApiNetworkParameters
     { genesisBlockHash :: !(ApiT (Hash "Genesis"))
     , blockchainStartTime :: !(ApiT StartTime)
@@ -514,6 +524,7 @@ data ApiNetworkParameters = ApiNetworkParameters
     , decentralizationLevel :: !(Quantity "percent" Percentage)
     , desiredPoolNumber :: !Word16
     , minimumUtxoValue :: !(Quantity "lovelace" Natural)
+    , eraTransitions :: ![ApiEraTransition]
     } deriving (Eq, Generic, Show)
 
 toApiNetworkParameters :: NetworkParameters -> ApiNetworkParameters
@@ -530,6 +541,7 @@ toApiNetworkParameters (NetworkParameters gp pp) = ApiNetworkParameters
     (Quantity $ unDecentralizationLevel $ view #decentralizationLevel pp)
     (view #desiredNumberOfStakePools pp)
     (Quantity $ fromIntegral $ getCoin $ view #minimumUTxOvalue pp)
+    []
 
 newtype ApiTxId = ApiTxId
     { id :: ApiT (Hash "Tx")
@@ -1291,6 +1303,16 @@ instance FromJSON (ApiT (Hash "Genesis")) where
 instance ToJSON (ApiT (Hash "Genesis")) where
     toJSON = toJSON . toText . getApiT
 
+instance FromJSON ApiEraTransitionInfo where
+    parseJSON = parseJSON >=> eitherToParser . first ShowFmt . fromText
+instance ToJSON ApiEraTransitionInfo where
+    toJSON = toJSON . toText
+
+instance FromJSON ApiEraTransition where
+    parseJSON = genericParseJSON defaultRecordTypeOptions
+instance ToJSON ApiEraTransition where
+    toJSON = genericToJSON defaultRecordTypeOptions
+
 instance FromJSON ApiNetworkParameters where
     parseJSON = genericParseJSON defaultRecordTypeOptions
 instance ToJSON ApiNetworkParameters where
@@ -1377,6 +1399,11 @@ instance ToJSON ApiWalletDiscovery where
 {-------------------------------------------------------------------------------
                              FromText/ToText instances
 -------------------------------------------------------------------------------}
+instance ToText ApiEraTransitionInfo where
+    toText = toTextFromBoundedEnum SnakeLowerCase
+
+instance FromText ApiEraTransitionInfo where
+    fromText = fromTextToBoundedEnum SnakeLowerCase
 
 instance FromText (AddressAmount Text) where
     fromText text = do
