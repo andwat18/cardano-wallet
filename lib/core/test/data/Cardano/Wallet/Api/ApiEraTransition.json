@@ -1,0 +1,55 @@
+{
+    "seed": -555808503264569893,
+    "samples": [
+        {
+            "transition": "byron_to_shelley"
+        },
+        {
+            "transition": "byron_to_shelley",
+            "occurs_at": {
+                "epoch_start_time": "1895-06-16T05:00:00Z",
+                "epoch_number": 15548
+            }
+        },
+        {
+            "transition": "byron_to_shelley",
+            "occurs_at": {
+                "epoch_start_time": "1860-06-22T14:12:42.62676891784Z",
+                "epoch_number": 2965
+            }
+        },
+        {
+            "transition": "byron_to_shelley"
+        },
+        {
+            "transition": "byron_to_shelley"
+        },
+        {
+            "transition": "byron_to_shelley"
+        },
+        {
+            "transition": "byron_to_shelley"
+        },
+        {
+            "transition": "byron_to_shelley",
+            "occurs_at": {
+                "epoch_start_time": "1873-08-24T02:13:37.46001681115Z",
+                "epoch_number": 30883
+            }
+        },
+        {
+            "transition": "byron_to_shelley",
+            "occurs_at": {
+                "epoch_start_time": "1885-04-28T20:00:00Z",
+                "epoch_number": 16439
+            }
+        },
+        {
+            "transition": "byron_to_shelley",
+            "occurs_at": {
+                "epoch_start_time": "1859-03-24T07:00:00Z",
+                "epoch_number": 13837
+            }
+        }
+    ]
+}

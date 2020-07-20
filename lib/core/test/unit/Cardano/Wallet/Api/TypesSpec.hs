@@ -48,6 +48,8 @@ import Cardano.Wallet.Api.Types
     , ApiCoinSelection (..)
     , ApiCoinSelectionInput (..)
     , ApiEpochInfo (..)
+    , ApiEraTransition (..)
+    , ApiEraTransitionInfo (..)
     , ApiFee (..)
     , ApiMnemonicT (..)
     , ApiNetworkClock (..)
@@ -267,6 +269,7 @@ import qualified Data.ByteArray as BA
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
 import qualified Data.HashMap.Strict as HM
+import qualified Data.List as L
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -291,6 +294,7 @@ spec = do
             jsonRoundtripAndGolden $ Proxy @ApiBlockReference
             jsonRoundtripAndGolden $ Proxy @ApiNetworkInformation
             jsonRoundtripAndGolden $ Proxy @ApiNetworkParameters
+            jsonRoundtripAndGolden $ Proxy @ApiEraTransition
             jsonRoundtripAndGolden $ Proxy @ApiNetworkClock
             jsonRoundtripAndGolden $ Proxy @ApiWalletDelegation
             jsonRoundtripAndGolden $ Proxy @ApiWalletDelegationStatus
@@ -797,6 +801,17 @@ spec = do
                         desiredPoolNumber (x :: ApiNetworkParameters)
                     , minimumUtxoValue =
                         minimumUtxoValue (x :: ApiNetworkParameters)
+                    , eraTransitions =
+                        eraTransitions (x :: ApiNetworkParameters)
+                    }
+            in
+            x' === x .&&. show x' === show x
+        it "ApiEraTransition" $ property $ \x ->
+            let x' = ApiEraTransition
+                    { transition =
+                        transition (x :: ApiEraTransition)
+                    , occursAt =
+                        occursAt (x :: ApiEraTransition)
                     }
             in
             x' === x .&&. show x' === show x
@@ -1200,6 +1215,14 @@ instance Arbitrary (Quantity "percent" Double) where
     shrink _ = [Quantity 0.0]
     arbitrary = Quantity <$> choose (0,100)
 
+instance Arbitrary ApiEraTransition where
+    arbitrary = do
+        epoch <- oneof [pure Nothing, Just <$> arbitrary]
+        pure $ ApiEraTransition ByronToShelley epoch
+
+instance {-# OVERLAPS #-} Arbitrary [ApiEraTransition] where
+    arbitrary = oneof [ pure [], L.replicate 1 <$> arbitrary ]
+
 instance Arbitrary ApiNetworkParameters where
     arbitrary = genericArbitrary
     shrink = genericShrink
@@ -1526,6 +1549,9 @@ instance ToSchema ApiNetworkClock where
 
 instance ToSchema ApiNetworkParameters where
     declareNamedSchema _ = declareSchemaForDefinition "ApiNetworkParameters"
+
+instance ToSchema ApiEraTransition where
+    declareNamedSchema _ = declareSchemaForDefinition "ApiEraTransition"
 
 instance ToSchema ApiNetworkTip where
     declareNamedSchema _ = declareSchemaForDefinition "ApiNetworkTip"
