@@ -113,6 +113,7 @@ dummyProtocolParameters = ProtocolParameters
     , txParameters = dummyTxParameters
     , desiredNumberOfStakePools = 100
     , minimumUTxOvalue = Coin 0
+    , transitionEras = []
     }
 
 -- | Construct a @Tx@, computing its hash using the dummy @mkTxId@.

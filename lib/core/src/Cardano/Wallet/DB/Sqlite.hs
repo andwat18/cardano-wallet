@@ -1121,6 +1121,7 @@ mkProtocolParametersEntity wid pp =
         (W.TxParameters fp mx)
         desiredPoolNum
         minUTxO
+        _
         ) = pp
 
 protocolParametersFromEntity
@@ -1132,6 +1133,7 @@ protocolParametersFromEntity (ProtocolParameters _ fp mx dl poolNum minUTxO) =
         (W.TxParameters fp (Quantity mx))
         poolNum
         minUTxO
+        []
 
 {-------------------------------------------------------------------------------
                                    DB Queries

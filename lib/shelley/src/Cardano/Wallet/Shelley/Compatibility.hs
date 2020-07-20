@@ -462,6 +462,7 @@ fromPParams pp = W.ProtocolParameters
         desiredNumberOfStakePoolsFromPParams pp
     , minimumUTxOvalue =
         minimumUTxOvalueFromPParams pp
+    , transitionEras = []
     }
 
 -- | Extract the current network decentralization level from the given set of

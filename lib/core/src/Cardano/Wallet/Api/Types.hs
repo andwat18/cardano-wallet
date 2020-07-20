@@ -165,6 +165,7 @@ import Cardano.Wallet.Primitive.Types
     , Direction (..)
     , EpochLength (..)
     , EpochNo (..)
+    , EraTransition (..)
     , EraTransitionInfo (..)
     , GenesisParameters (..)
     , Hash (..)
@@ -262,6 +263,7 @@ import Web.HttpApiData
     ( FromHttpApiData (..), ToHttpApiData (..) )
 
 import qualified Cardano.Crypto.Wallet as CC
+import qualified Cardano.Wallet.Primitive.Slotting as Slotting
 import qualified Data.Aeson as Aeson
 import qualified Data.Aeson.Types as Aeson
 import qualified Data.ByteString.Lazy as BL
@@ -543,7 +545,17 @@ toApiNetworkParameters (NetworkParameters gp pp) = ApiNetworkParameters
     (Quantity $ unDecentralizationLevel $ view #decentralizationLevel pp)
     (view #desiredNumberOfStakePools pp)
     (Quantity $ fromIntegral $ getCoin $ view #minimumUTxOvalue pp)
-    []
+    (fromEraTransition <$> (view #transitionEras pp))
+  where
+    fromEraTransition (EraTransition info (Just epochN)) =
+        ApiEraTransition
+        (ApiEraTransitionInfo $ ApiT info)
+        (Just $ ApiEpochInfo
+            (ApiT epochN)
+            (Slotting.epochStartTime (Slotting.slotParams gp) epochN)
+        )
+    fromEraTransition (EraTransition info Nothing) =
+        ApiEraTransition (ApiEraTransitionInfo $ ApiT info) Nothing
 
 newtype ApiTxId = ApiTxId
     { id :: ApiT (Hash "Tx")

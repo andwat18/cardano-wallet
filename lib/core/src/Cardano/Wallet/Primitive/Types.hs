@@ -94,7 +94,7 @@ module Cardano.Wallet.Primitive.Types
     , GenesisParameters (..)
     , ProtocolParameters (..)
     , EraTransitionInfo (..)
-   -- , EraTransition (..)
+    , EraTransition (..)
     , TxParameters (..)
     , ActiveSlotCoefficient (..)
     , DecentralizationLevel (..)
@@ -1379,12 +1379,29 @@ instance NFData ActiveSlotCoefficient
 
 data EraTransitionInfo = ByronToShelley
     deriving (Eq, Bounded, Enum, Generic, Show)
+instance NFData EraTransitionInfo
+
+instance Buildable EraTransitionInfo where
+    build ByronToShelley =
+        "Byron  →  Shelley"
 
 instance ToText EraTransitionInfo where
     toText = toTextFromBoundedEnum SnakeLowerCase
 
 instance FromText EraTransitionInfo where
     fromText = fromTextToBoundedEnum SnakeLowerCase
+
+data EraTransition = EraTransition
+    { eraTransitionInfo :: !EraTransitionInfo
+    , occursAt :: !(Maybe EpochNo)
+    } deriving (Eq, Generic, Show)
+instance NFData EraTransition
+
+instance Buildable EraTransition where
+    build (EraTransition info (Just e)) =
+        build info <> " (in epoch: " <> build e <> ")"
+    build (EraTransition info Nothing) =
+        build info <> " (time of transition not known)"
 
 -- | Protocol parameters that can be changed through the update system.
 --
@@ -1401,7 +1418,10 @@ data ProtocolParameters = ProtocolParameters
         -- Also known as k parameter.
     , minimumUTxOvalue
         :: Coin
-        -- ^ The minimu UTxO value.
+        -- ^ The minimum UTxO value.
+    , transitionEras
+        :: [EraTransition]
+        -- ^ The transition between eras.
     } deriving (Eq, Generic, Show)
 
 instance NFData ProtocolParameters
@@ -1412,6 +1432,7 @@ instance Buildable ProtocolParameters where
         , "Transaction parameters: " <> build (pp ^. #txParameters)
         , "Desired number of pools: " <> build (pp ^. #desiredNumberOfStakePools)
         , "Minimum UTxO value: " <> build (pp ^. #minimumUTxOvalue)
+        , "Transitions between eras: " <> build (pp ^. #transitionEras)
         ]
 
 -- | Indicates the current level of decentralization in the network.

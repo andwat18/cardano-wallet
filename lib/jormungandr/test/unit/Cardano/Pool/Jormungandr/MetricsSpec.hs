@@ -505,6 +505,7 @@ genesisProtocolParameters = ProtocolParameters
     , txParameters = genesisTxParameters
     , desiredNumberOfStakePools = 10
     , minimumUTxOvalue = Coin 0
+    , transitionEras = []
     }
 
 genesisTxParameters :: TxParameters
