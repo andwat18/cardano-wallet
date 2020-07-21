@@ -193,7 +193,7 @@ newtype MkAddressPoolGapError = ErrGapOutOfRange Integer
 -- | A default 'AddressPoolGap', as suggested in BIP-0044
 defaultAddressPoolGap :: AddressPoolGap
 defaultAddressPoolGap =
-    AddressPoolGap 20
+    AddressPoolGap 100
 
 {-------------------------------------------------------------------------------
                                  Address Pool
