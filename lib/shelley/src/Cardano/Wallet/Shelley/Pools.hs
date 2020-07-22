@@ -206,7 +206,7 @@ combineDbAndLsqData sp =
     -- treat the lsq data as the source of truth, and dropMissing here.
     dbButNoLsq = dropMissing
 
-    bothPresent = zipWithMatched  $ \k lsq db -> mkApiPool k lsq (Just db)
+    bothPresent = zipWithMatched $ \k lsq db -> mkApiPool k lsq (Just db)
 
     mkApiPool
         :: PoolId
