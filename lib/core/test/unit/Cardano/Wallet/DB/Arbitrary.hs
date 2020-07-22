@@ -82,6 +82,8 @@ import Cardano.Wallet.Primitive.Types
     , DelegationCertificate (..)
     , Direction (..)
     , EpochNo (..)
+    , EraTransition (..)
+    , EraTransitionInfo (..)
     , FeePolicy (..)
     , Hash (..)
     , PassphraseScheme (..)
@@ -571,6 +573,7 @@ instance Arbitrary ProtocolParameters where
         <*> arbitrary
         <*> arbitrary
         <*> arbitrary
+        <*> oneof [pure Nothing, Just <$> arbitrary]
     shrink = genericShrink
 
 instance Arbitrary TxParameters where
@@ -583,6 +586,11 @@ instance Arbitrary FeePolicy where
     shrink (LinearFee a b c) = [LinearFee a' b' c | (a', b') <- shrink (a, b)]
 
 deriving instance Arbitrary a => Arbitrary (Quantity n a)
+
+instance Arbitrary EraTransition where
+    arbitrary = do
+        epoch <- oneof [pure Nothing, Just <$> arbitrary]
+        pure $ EraTransition ByronToShelley epoch
 
 {-------------------------------------------------------------------------------
                                  Miscellaneous

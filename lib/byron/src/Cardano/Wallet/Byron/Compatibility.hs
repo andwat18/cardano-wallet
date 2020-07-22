@@ -206,7 +206,7 @@ mainnetNetworkParameters = W.NetworkParameters
             }
         , desiredNumberOfStakePools = 0
         , minimumUTxOvalue = W.Coin 0
-        , transitionEras = []
+        , transitionEras = Nothing
         }
     }
 
@@ -459,7 +459,7 @@ protocolParametersFromPP pp = W.ProtocolParameters
         }
     , desiredNumberOfStakePools = 0
     , minimumUTxOvalue = W.Coin 0
-    , transitionEras = []
+    , transitionEras = Nothing
     }
 
 -- | Extract the protocol parameters relevant to the wallet out of the

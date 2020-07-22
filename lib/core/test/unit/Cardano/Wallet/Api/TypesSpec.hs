@@ -270,7 +270,6 @@ import qualified Data.ByteArray as BA
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as B8
 import qualified Data.HashMap.Strict as HM
-import qualified Data.List as L
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as T
@@ -1221,9 +1220,6 @@ instance Arbitrary ApiEraTransition where
         epoch <- oneof [pure Nothing, Just <$> arbitrary]
         let byronToShelley = ApiEraTransitionInfo $ ApiT ByronToShelley
         pure $ ApiEraTransition byronToShelley epoch
-
-instance {-# OVERLAPS #-} Arbitrary [ApiEraTransition] where
-    arbitrary = oneof [ pure [], L.replicate 1 <$> arbitrary ]
 
 instance Arbitrary ApiNetworkParameters where
     arbitrary = genericArbitrary

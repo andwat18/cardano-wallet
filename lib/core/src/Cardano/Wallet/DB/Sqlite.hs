@@ -1133,7 +1133,7 @@ protocolParametersFromEntity (ProtocolParameters _ fp mx dl poolNum minUTxO) =
         (W.TxParameters fp (Quantity mx))
         poolNum
         minUTxO
-        []
+        Nothing
 
 {-------------------------------------------------------------------------------
                                    DB Queries

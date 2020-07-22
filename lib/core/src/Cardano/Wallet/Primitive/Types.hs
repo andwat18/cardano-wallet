@@ -1420,7 +1420,7 @@ data ProtocolParameters = ProtocolParameters
         :: Coin
         -- ^ The minimum UTxO value.
     , transitionEras
-        :: [EraTransition]
+        :: Maybe EraTransition
         -- ^ The transition between eras.
     } deriving (Eq, Generic, Show)
 
@@ -1432,7 +1432,11 @@ instance Buildable ProtocolParameters where
         , "Transaction parameters: " <> build (pp ^. #txParameters)
         , "Desired number of pools: " <> build (pp ^. #desiredNumberOfStakePools)
         , "Minimum UTxO value: " <> build (pp ^. #minimumUTxOvalue)
-        , "Transitions between eras: " <> build (pp ^. #transitionEras)
+        , case pp ^. #transitionEras of
+              Just era ->
+                  "Transition between eras: " <> build era
+              Nothing ->
+                  mempty
         ]
 
 -- | Indicates the current level of decentralization in the network.

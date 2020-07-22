@@ -431,7 +431,7 @@ mockJormungandrClient logLine = JormungandrClient
                     }
                 , desiredNumberOfStakePools = 10
                 , minimumUTxOvalue = Coin 0
-                , transitionEras = []
+                , transitionEras = Nothing
                 }
             })
 

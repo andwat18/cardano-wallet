@@ -849,7 +849,6 @@ components:
         - decentralization_level
         - desired_pool_number
         - minimum_utxo_value
-        - era_transitions
       properties:
         genesis_block_hash: *blockId
         blockchain_start_time: *date
@@ -860,9 +859,7 @@ components:
         decentralization_level: *percentage
         desired_pool_number: *stakePoolsNumber
         minimum_utxo_value: *amount
-        era_transitions:
-          type: array
-          items: *ApiEraTransition
+        era_transitions: *ApiEraTransition
 
     ApiSelectCoinsData: &ApiSelectCoinsData
       type: object

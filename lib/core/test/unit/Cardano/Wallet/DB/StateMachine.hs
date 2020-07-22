@@ -118,6 +118,8 @@ import Cardano.Wallet.Primitive.Types
     , DelegationCertificate
     , Direction (..)
     , EpochNo (..)
+    , EraTransition
+    , EraTransitionInfo
     , FeePolicy
     , GenesisParameters
     , Hash (..)
@@ -857,6 +859,12 @@ instance ToExpr Percentage where
     toExpr = genericToExpr
 
 instance ToExpr ProtocolParameters where
+    toExpr = genericToExpr
+
+instance ToExpr EraTransition where
+    toExpr = genericToExpr
+
+instance ToExpr EraTransitionInfo where
     toExpr = genericToExpr
 
 instance ToExpr DecentralizationLevel where
