@@ -206,7 +206,7 @@ mainnetNetworkParameters = W.NetworkParameters
             }
         , desiredNumberOfStakePools = 0
         , minimumUTxOvalue = W.Coin 0
-        , transitionEras = Nothing
+        , transitionEras = W.EraTransition W.ByronToShelley Nothing
         }
     }
 
@@ -459,7 +459,7 @@ protocolParametersFromPP pp = W.ProtocolParameters
         }
     , desiredNumberOfStakePools = 0
     , minimumUTxOvalue = W.Coin 0
-    , transitionEras = Nothing
+    , transitionEras = W.EraTransition W.ByronToShelley Nothing
     }
 
 -- | Extract the protocol parameters relevant to the wallet out of the

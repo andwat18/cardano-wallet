@@ -54,6 +54,8 @@ import Cardano.Wallet.Primitive.Types
     , Coin (..)
     , EpochLength (..)
     , EpochNo
+    , EraTransition (..)
+    , EraTransitionInfo (..)
     , FeePolicy (..)
     , GenesisParameters (..)
     , Hash (..)
@@ -505,7 +507,7 @@ genesisProtocolParameters = ProtocolParameters
     , txParameters = genesisTxParameters
     , desiredNumberOfStakePools = 10
     , minimumUTxOvalue = Coin 0
-    , transitionEras = Nothing
+    , transitionEras = EraTransition ByronToShelley Nothing
     }
 
 genesisTxParameters :: TxParameters

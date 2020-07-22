@@ -33,6 +33,8 @@ import Cardano.Wallet.Primitive.Types
     ( BlockHeader (..)
     , Coin (..)
     , EpochLength (..)
+    , EraTransition (..)
+    , EraTransitionInfo (..)
     , GenesisParameters (..)
     , Hash (..)
     , NetworkParameters (..)
@@ -431,7 +433,7 @@ mockJormungandrClient logLine = JormungandrClient
                     }
                 , desiredNumberOfStakePools = 10
                 , minimumUTxOvalue = Coin 0
-                , transitionEras = Nothing
+                , transitionEras = EraTransition ByronToShelley Nothing
                 }
             })
 

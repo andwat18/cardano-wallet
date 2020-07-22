@@ -343,6 +343,8 @@ migrateManually tr defaultFieldValues =
 
         addMinimumUTxOValueIfMissing conn
 
+        addTransitionErasIfMissing conn
+
         -- FIXME
         -- Temporary migration to fix Daedalus flight wallets. This should
         -- really be removed as soon as we have a fix for the cardano-sl:wallet
@@ -458,6 +460,17 @@ migrateManually tr defaultFieldValues =
       where
         value = T.pack $ show $ W.getCoin $ defaultMinimumUTxOValue defaultFieldValues
 
+    -- | Adds an 'transition_eras' column to the 'protocol_parameters'
+    -- table if it is missing.
+    --
+    addTransitionErasIfMissing :: Sqlite.Connection -> IO ()
+    addTransitionErasIfMissing conn = do
+        addColumn conn (DBField ProtocolParametersTransitionEras) value
+      where
+        value = case defaultTransitionEras defaultFieldValues of
+            Nothing -> ""
+            Just v -> T.pack $ show $ W.unEpochNo v
+
     -- | This table became @protocol_parameters@.
     removeOldTxParametersTable :: Sqlite.Connection -> IO ()
     removeOldTxParametersTable conn = do
@@ -513,6 +526,7 @@ data DefaultFieldValues = DefaultFieldValues
     { defaultActiveSlotCoefficient :: W.ActiveSlotCoefficient
     , defaultDesiredNumberOfPool :: Word16
     , defaultMinimumUTxOValue :: W.Coin
+    , defaultTransitionEras :: Maybe W.EpochNo
     }
 
 -- | Sets up a connection to the SQLite database.
@@ -1114,26 +1128,26 @@ mkProtocolParametersEntity
     -> W.ProtocolParameters
     -> ProtocolParameters
 mkProtocolParametersEntity wid pp =
-    ProtocolParameters wid fp (getQuantity mx) dl desiredPoolNum minUTxO
+    ProtocolParameters wid fp (getQuantity mx) dl desiredPoolNum minUTxO epochNoM
   where
     (W.ProtocolParameters
         (W.DecentralizationLevel dl)
         (W.TxParameters fp mx)
         desiredPoolNum
         minUTxO
-        _
+        (W.EraTransition _ epochNoM)
         ) = pp
 
 protocolParametersFromEntity
     :: ProtocolParameters
     -> W.ProtocolParameters
-protocolParametersFromEntity (ProtocolParameters _ fp mx dl poolNum minUTxO) =
+protocolParametersFromEntity (ProtocolParameters _ fp mx dl poolNum minUTxO epochNoM) =
     W.ProtocolParameters
         (W.DecentralizationLevel dl)
         (W.TxParameters fp (Quantity mx))
         poolNum
         minUTxO
-        Nothing
+        (W.EraTransition W.ByronToShelley epochNoM)
 
 {-------------------------------------------------------------------------------
                                    DB Queries

@@ -801,8 +801,8 @@ spec = do
                         desiredPoolNumber (x :: ApiNetworkParameters)
                     , minimumUtxoValue =
                         minimumUtxoValue (x :: ApiNetworkParameters)
-                    , eraTransitions =
-                        eraTransitions (x :: ApiNetworkParameters)
+                    , erasTransition =
+                        erasTransition (x :: ApiNetworkParameters)
                     }
             in
             x' === x .&&. show x' === show x

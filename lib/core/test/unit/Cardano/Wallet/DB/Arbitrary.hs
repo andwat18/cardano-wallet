@@ -573,7 +573,7 @@ instance Arbitrary ProtocolParameters where
         <*> arbitrary
         <*> arbitrary
         <*> arbitrary
-        <*> oneof [pure Nothing, Just <$> arbitrary]
+        <*> arbitrary
     shrink = genericShrink
 
 instance Arbitrary TxParameters where

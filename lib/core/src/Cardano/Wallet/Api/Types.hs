@@ -528,7 +528,7 @@ data ApiNetworkParameters = ApiNetworkParameters
     , decentralizationLevel :: !(Quantity "percent" Percentage)
     , desiredPoolNumber :: !Word16
     , minimumUtxoValue :: !(Quantity "lovelace" Natural)
-    , eraTransitions :: !(Maybe ApiEraTransition)
+    , erasTransition :: !ApiEraTransition
     } deriving (Eq, Generic, Show)
 
 toApiNetworkParameters :: NetworkParameters -> ApiNetworkParameters
@@ -545,7 +545,7 @@ toApiNetworkParameters (NetworkParameters gp pp) = ApiNetworkParameters
     (Quantity $ unDecentralizationLevel $ view #decentralizationLevel pp)
     (view #desiredNumberOfStakePools pp)
     (Quantity $ fromIntegral $ getCoin $ view #minimumUTxOvalue pp)
-    (fromEraTransition <$> view #transitionEras pp)
+    (fromEraTransition $ view #transitionEras pp)
   where
     fromEraTransition (EraTransition info (Just epochN)) =
         ApiEraTransition

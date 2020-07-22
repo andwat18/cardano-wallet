@@ -129,6 +129,7 @@ import Cardano.Wallet.Primitive.Types
     , Block
     , BlockHeader (..)
     , ChimericAccount
+    , EraTransition (..)
     , GenesisParameters (..)
     , NetworkParameters (..)
     , ProtocolParameters (..)
@@ -294,6 +295,9 @@ serveWallet Tracers{..} sTolerance databaseDir hostPref listen backend beforeMai
                     desiredNumberOfStakePools (protocolParameters np)
                 , defaultMinimumUTxOValue =
                     minimumUTxOvalue (protocolParameters np)
+                , defaultTransitionEras =
+                    let (EraTransition _ epochNoM) = transitionEras (protocolParameters np)
+                    in epochNoM
                 }
             )
             (timeInterpreter nl)

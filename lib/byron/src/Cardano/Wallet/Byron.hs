@@ -102,6 +102,7 @@ import Cardano.Wallet.Primitive.Types
     ( Address
     , Block
     , ChimericAccount
+    , EraTransition (..)
     , GenesisParameters (..)
     , NetworkParameters (..)
     , ProtocolParameters (..)
@@ -281,6 +282,9 @@ serveWallet
                     desiredNumberOfStakePools (protocolParameters np)
                 , defaultMinimumUTxOValue =
                     minimumUTxOvalue (protocolParameters np)
+                , defaultTransitionEras =
+                    let (EraTransition _ epochNoM) = transitionEras (protocolParameters np)
+                    in epochNoM
                 }
             )
             (timeInterpreter nl)

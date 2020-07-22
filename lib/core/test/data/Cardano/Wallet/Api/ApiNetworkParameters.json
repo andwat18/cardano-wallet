@@ -1,325 +1,347 @@
 {
-    "seed": -350068030896355953,
+    "seed": 6697364293611047841,
     "samples": [
         {
             "slot_length": {
-                "quantity": 591,
+                "quantity": 3492,
                 "unit": "second"
             },
             "decentralization_level": {
-                "quantity": 12.36,
-                "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
-            },
-            "epoch_stability": {
-                "quantity": 20124,
-                "unit": "block"
-            },
-            "genesis_block_hash": "ab0867612b2e37172a37073c0c211b6d762c0f1129777335cb313c1d2e602879",
-            "blockchain_start_time": "1868-01-20T14:00:00Z",
-            "desired_pool_number": 19300,
-            "epoch_length": {
-                "quantity": 12647,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 94.77529839094959,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 0,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 4335,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 17.03,
-                "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
-            },
-            "epoch_stability": {
-                "quantity": 31732,
-                "unit": "block"
-            },
-            "genesis_block_hash": "542073530d0a6f0b21501c26365037636e2bfe385c603d05064e083f9e1a5452",
-            "blockchain_start_time": "1881-06-18T19:00:00Z",
-            "desired_pool_number": 8145,
-            "epoch_length": {
-                "quantity": 23312,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 57.429067471564366,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 206,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 1180,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 32.63,
+                "quantity": 0.9,
                 "unit": "percent"
             },
             "epoch_stability": {
-                "quantity": 26786,
+                "quantity": 13568,
                 "unit": "block"
             },
-            "genesis_block_hash": "6938086a73057c48702742e301036b671f5730431b5905ee18545b2b3c725810",
-            "blockchain_start_time": "1870-03-28T11:14:04.897351892747Z",
-            "desired_pool_number": 21395,
+            "genesis_block_hash": "356f1446313b9c246f1b09722724111467107c476a541c6502189e170e0f4661",
+            "blockchain_start_time": "1894-07-17T19:00:00Z",
+            "desired_pool_number": 3650,
             "epoch_length": {
-                "quantity": 22968,
+                "quantity": 32563,
                 "unit": "slot"
             },
-            "active_slot_coefficient": {
-                "quantity": 54.608655680388516,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 192,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 5560,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 50.35,
-                "unit": "percent"
-            },
-            "epoch_stability": {
-                "quantity": 11860,
-                "unit": "block"
-            },
-            "genesis_block_hash": "57ea2c3d163f7e615a8a2a0a06ca2a220c0f3d3a341b58465f7696146e5cb166",
-            "blockchain_start_time": "1864-08-05T07:00:00Z",
-            "desired_pool_number": 28217,
-            "epoch_length": {
-                "quantity": 10603,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 22.92242075415477,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 101,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 8358,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 57.59,
-                "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
-            },
-            "epoch_stability": {
-                "quantity": 1088,
-                "unit": "block"
-            },
-            "genesis_block_hash": "2e731c7a2c72616e287a10c73619065834326011296d664a23787adfe22a0677",
-            "blockchain_start_time": "1880-03-23T03:16:09Z",
-            "desired_pool_number": 7853,
-            "epoch_length": {
-                "quantity": 12379,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 48.95653132537676,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 178,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 8016,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 76.23,
-                "unit": "percent"
-            },
-            "era_transitions": {
+            "eras_transition": {
                 "transition": "byron_to_shelley",
                 "occurs_at": {
-                    "epoch_start_time": "1902-05-07T12:29:48Z",
-                    "epoch_number": 24651
+                    "epoch_start_time": "1904-07-10T22:44:52.391096466243Z",
+                    "epoch_number": 12771
                 }
             },
-            "epoch_stability": {
-                "quantity": 19594,
-                "unit": "block"
-            },
-            "genesis_block_hash": "1c413940c83f3055457ff125483f19721a0643032b715c2c26463a0148a82264",
-            "blockchain_start_time": "1907-03-02T22:39:29.314812017608Z",
-            "desired_pool_number": 14148,
-            "epoch_length": {
-                "quantity": 5896,
-                "unit": "slot"
-            },
             "active_slot_coefficient": {
-                "quantity": 79.27169784105254,
+                "quantity": 5.275821842916795,
                 "unit": "percent"
             },
             "minimum_utxo_value": {
-                "quantity": 233,
+                "quantity": 218,
                 "unit": "lovelace"
             }
         },
         {
             "slot_length": {
-                "quantity": 4889,
+                "quantity": 7499,
                 "unit": "second"
             },
             "decentralization_level": {
-                "quantity": 0.96,
+                "quantity": 99.47,
                 "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
             },
             "epoch_stability": {
-                "quantity": 17722,
+                "quantity": 21657,
                 "unit": "block"
             },
-            "genesis_block_hash": "cd063c919b622b2c485ffe0c9d9e626218796ded3c523c744c5b3ffe674e6a3d",
-            "blockchain_start_time": "1902-10-27T18:10:05.401521087722Z",
-            "desired_pool_number": 2755,
+            "genesis_block_hash": "7a9266723f4f30485c5e4d3d2b24767c33732c1b90245164ce5d10517064360f",
+            "blockchain_start_time": "1901-03-05T18:00:00Z",
+            "desired_pool_number": 18843,
             "epoch_length": {
-                "quantity": 10544,
+                "quantity": 18877,
                 "unit": "slot"
             },
-            "active_slot_coefficient": {
-                "quantity": 40.523272491647674,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 23,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 4010,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 0.23,
-                "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
-            },
-            "epoch_stability": {
-                "quantity": 19213,
-                "unit": "block"
-            },
-            "genesis_block_hash": "623665010d5f4d0903441022ab1f9563143c314f284f7d247c3a05aa962d602b",
-            "blockchain_start_time": "1902-07-31T00:00:00Z",
-            "desired_pool_number": 28905,
-            "epoch_length": {
-                "quantity": 15385,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 66.7699513672164,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 162,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 9937,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 42.06,
-                "unit": "percent"
-            },
-            "era_transitions": {
-                "transition": "byron_to_shelley"
-            },
-            "epoch_stability": {
-                "quantity": 30924,
-                "unit": "block"
-            },
-            "genesis_block_hash": "375958321107690f03791978367256a22d5f4f57492220216f0745566e6cc658",
-            "blockchain_start_time": "1891-09-02T17:20:23.163241919466Z",
-            "desired_pool_number": 16258,
-            "epoch_length": {
-                "quantity": 1149,
-                "unit": "slot"
-            },
-            "active_slot_coefficient": {
-                "quantity": 20.326876498799706,
-                "unit": "percent"
-            },
-            "minimum_utxo_value": {
-                "quantity": 49,
-                "unit": "lovelace"
-            }
-        },
-        {
-            "slot_length": {
-                "quantity": 8801,
-                "unit": "second"
-            },
-            "decentralization_level": {
-                "quantity": 5.5,
-                "unit": "percent"
-            },
-            "era_transitions": {
+            "eras_transition": {
                 "transition": "byron_to_shelley",
                 "occurs_at": {
-                    "epoch_start_time": "1870-10-23T04:38:46.329123153557Z",
-                    "epoch_number": 24118
+                    "epoch_start_time": "1887-11-10T22:44:45.788334410946Z",
+                    "epoch_number": 31428
                 }
             },
-            "epoch_stability": {
-                "quantity": 1798,
-                "unit": "block"
-            },
-            "genesis_block_hash": "0e550e72704f0b228c0d187cec2c1357078f7b991840eadb5b1f3f9d0b5e6110",
-            "blockchain_start_time": "1867-06-10T14:00:00Z",
-            "desired_pool_number": 4005,
-            "epoch_length": {
-                "quantity": 16784,
-                "unit": "slot"
-            },
             "active_slot_coefficient": {
-                "quantity": 30.508657446219644,
+                "quantity": 78.24947680090911,
                 "unit": "percent"
             },
             "minimum_utxo_value": {
-                "quantity": 96,
+                "quantity": 84,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 8270,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 54.48,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 11018,
+                "unit": "block"
+            },
+            "genesis_block_hash": "664f1d453633025e041a39631f661e023a6758681d164bb72e4e7d5a3a18755a",
+            "blockchain_start_time": "1865-10-09T09:43:55Z",
+            "desired_pool_number": 17170,
+            "epoch_length": {
+                "quantity": 13272,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley",
+                "occurs_at": {
+                    "epoch_start_time": "1860-03-02T19:02:10.886971335028Z",
+                    "epoch_number": 12095
+                }
+            },
+            "active_slot_coefficient": {
+                "quantity": 39.34462738424857,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 123,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 3344,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 13.65,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 24296,
+                "unit": "block"
+            },
+            "genesis_block_hash": "69754a08677b2451994b4233031edc6c6716127862377328223c0f3f18140013",
+            "blockchain_start_time": "1872-04-25T18:51:55.276262380555Z",
+            "desired_pool_number": 19281,
+            "epoch_length": {
+                "quantity": 10568,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley"
+            },
+            "active_slot_coefficient": {
+                "quantity": 76.41089023027196,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 47,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 6072,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 0.94,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 13102,
+                "unit": "block"
+            },
+            "genesis_block_hash": "5e17691e133e3144341c4c2b20d0080d0d625b5e4c762a8f4f2c5e775f096023",
+            "blockchain_start_time": "1891-05-31T01:12:31Z",
+            "desired_pool_number": 17048,
+            "epoch_length": {
+                "quantity": 25723,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley",
+                "occurs_at": {
+                    "epoch_start_time": "1894-10-20T13:59:37.641452752048Z",
+                    "epoch_number": 18799
+                }
+            },
+            "active_slot_coefficient": {
+                "quantity": 74.21266834238659,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 214,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 5741,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 16.83,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 5280,
+                "unit": "block"
+            },
+            "genesis_block_hash": "7ef99c078ebb0e51ec55390c462ef80a566c138d62154a48466f403d7d1d6a1a",
+            "blockchain_start_time": "1896-01-04T06:42:18Z",
+            "desired_pool_number": 1121,
+            "epoch_length": {
+                "quantity": 8151,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley"
+            },
+            "active_slot_coefficient": {
+                "quantity": 67.4846089753597,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 183,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 9201,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 38.95,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 28539,
+                "unit": "block"
+            },
+            "genesis_block_hash": "4231287c63654eec78e24a2c20d85ae81c504b31300f55573a4d504a6f6a4a70",
+            "blockchain_start_time": "1880-04-26T04:30:53Z",
+            "desired_pool_number": 28586,
+            "epoch_length": {
+                "quantity": 9523,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley"
+            },
+            "active_slot_coefficient": {
+                "quantity": 10.580222491003187,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 133,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 3336,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 24.7,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 29762,
+                "unit": "block"
+            },
+            "genesis_block_hash": "5d3f454b437574aa674c636314627758443a37585f7731774b447f3442251a4c",
+            "blockchain_start_time": "1860-09-06T13:47:39.122661066294Z",
+            "desired_pool_number": 29049,
+            "epoch_length": {
+                "quantity": 14131,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley"
+            },
+            "active_slot_coefficient": {
+                "quantity": 97.3500693710555,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 183,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 5331,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 16.15,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 4904,
+                "unit": "block"
+            },
+            "genesis_block_hash": "46720008174b642618763a421405618876393d1b790b55d9611c5031170e9522",
+            "blockchain_start_time": "1898-09-20T11:51:52Z",
+            "desired_pool_number": 23857,
+            "epoch_length": {
+                "quantity": 17094,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley",
+                "occurs_at": {
+                    "epoch_start_time": "1904-10-29T03:40:13.123577675224Z",
+                    "epoch_number": 28389
+                }
+            },
+            "active_slot_coefficient": {
+                "quantity": 31.827676933676585,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 204,
+                "unit": "lovelace"
+            }
+        },
+        {
+            "slot_length": {
+                "quantity": 5468,
+                "unit": "second"
+            },
+            "decentralization_level": {
+                "quantity": 98.55,
+                "unit": "percent"
+            },
+            "epoch_stability": {
+                "quantity": 29377,
+                "unit": "block"
+            },
+            "genesis_block_hash": "45616d3d910371be2a1f637f504469733d667dbb6a2510220e8006622871d459",
+            "blockchain_start_time": "1862-11-17T16:31:48.430241931552Z",
+            "desired_pool_number": 10157,
+            "epoch_length": {
+                "quantity": 26228,
+                "unit": "slot"
+            },
+            "eras_transition": {
+                "transition": "byron_to_shelley",
+                "occurs_at": {
+                    "epoch_start_time": "1904-09-22T05:06:41Z",
+                    "epoch_number": 11155
+                }
+            },
+            "active_slot_coefficient": {
+                "quantity": 80.95330550088971,
+                "unit": "percent"
+            },
+            "minimum_utxo_value": {
+                "quantity": 116,
                 "unit": "lovelace"
             }
         }

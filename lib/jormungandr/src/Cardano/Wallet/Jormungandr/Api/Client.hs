@@ -81,6 +81,8 @@ import Cardano.Wallet.Primitive.Types
     , Coin (..)
     , EpochLength (..)
     , EpochNo (..)
+    , EraTransition (..)
+    , EraTransitionInfo (..)
     , GenesisParameters (..)
     , Hash (..)
     , NetworkParameters (..)
@@ -330,7 +332,7 @@ mkJormungandrClient mgr baseUrl = JormungandrClient
                                 }
                             , desiredNumberOfStakePools = fromIntegral poolcapping
                             , minimumUTxOvalue = Coin 0
-                            , transitionEras = Nothing
+                            , transitionEras = EraTransition ByronToShelley Nothing
                             }
                         }
                     )

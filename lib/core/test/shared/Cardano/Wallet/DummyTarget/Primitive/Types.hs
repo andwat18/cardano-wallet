@@ -27,6 +27,8 @@ import Cardano.Wallet.Primitive.Types
     , ChimericAccount (..)
     , Coin (..)
     , EpochLength (..)
+    , EraTransition (..)
+    , EraTransitionInfo (..)
     , FeePolicy (..)
     , GenesisParameters (..)
     , Hash (..)
@@ -113,7 +115,7 @@ dummyProtocolParameters = ProtocolParameters
     , txParameters = dummyTxParameters
     , desiredNumberOfStakePools = 100
     , minimumUTxOvalue = Coin 0
-    , transitionEras = Nothing
+    , transitionEras = EraTransition ByronToShelley Nothing
     }
 
 -- | Construct a @Tx@, computing its hash using the dummy @mkTxId@.

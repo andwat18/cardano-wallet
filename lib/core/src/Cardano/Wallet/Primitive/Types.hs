@@ -101,6 +101,7 @@ module Cardano.Wallet.Primitive.Types
     , EpochLength (..)
     , EpochNo (..)
     , unsafeEpochNo
+    , isValidEpochNo
     , FeePolicy (..)
     , SlotId (..)
     , SlotNo (..)
@@ -1420,7 +1421,7 @@ data ProtocolParameters = ProtocolParameters
         :: Coin
         -- ^ The minimum UTxO value.
     , transitionEras
-        :: Maybe EraTransition
+        :: EraTransition
         -- ^ The transition between eras.
     } deriving (Eq, Generic, Show)
 
@@ -1432,11 +1433,7 @@ instance Buildable ProtocolParameters where
         , "Transaction parameters: " <> build (pp ^. #txParameters)
         , "Desired number of pools: " <> build (pp ^. #desiredNumberOfStakePools)
         , "Minimum UTxO value: " <> build (pp ^. #minimumUTxOvalue)
-        , case pp ^. #transitionEras of
-              Just era ->
-                  "Transition between eras: " <> build era
-              Nothing ->
-                  mempty
+        , "Transition between eras: " <> build (pp ^. #transitionEras)
         ]
 
 -- | Indicates the current level of decentralization in the network.
@@ -1503,6 +1500,18 @@ newtype EpochNo = EpochNo { unEpochNo :: Word31 }
 
 instance ToText EpochNo where
     toText = T.pack . show . unEpochNo
+
+instance FromText EpochNo where
+    fromText = validate <=< (fmap (EpochNo . fromIntegral) . fromText @Natural)
+      where
+        validate x
+            | isValidEpochNo x =
+                return x
+            | otherwise =
+                Left $ TextDecodingError "EpochNo value is out of bounds"
+
+isValidEpochNo :: EpochNo -> Bool
+isValidEpochNo c = c >= minBound && c <= maxBound
 
 instance Buildable EpochNo where
     build (EpochNo e) = build $ fromIntegral @Word31 @Word32 e
