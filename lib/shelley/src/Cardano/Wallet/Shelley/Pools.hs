@@ -68,11 +68,10 @@ import Cardano.Wallet.Primitive.Types
     )
 import Cardano.Wallet.Shelley.Compatibility
     ( Shelley
-    , ShelleyBlock
-    , fromShelleyBlock'
     , getProducer
-    , toBlockHeader
-    , toPoint
+    , poolCertsFromShelleyBlock
+    , toCardanoBlockHeader
+    , toShelleyBlockHeader
     )
 import Cardano.Wallet.Shelley.Network
     ( NodePoolLsqData (..) )
@@ -112,6 +111,10 @@ import Fmt
     ( fixedF, pretty )
 import GHC.Generics
     ( Generic )
+import Ouroboros.Consensus.Cardano.Block
+    ( CardanoBlock, HardForkBlock (..) )
+import Ouroboros.Consensus.Shelley.Protocol
+    ( TPraosCrypto )
 
 import qualified Cardano.Wallet.Api.Types as Api
 import qualified Data.Map.Merge.Strict as Map
@@ -139,11 +142,13 @@ data StakePoolLayer = StakePoolLayer
     }
 
 newStakePoolLayer
-    :: GenesisParameters
-    -> NetworkLayer IO (IO Shelley) b
+    :: forall sc.
+       GenesisParameters
+    -> NetworkLayer IO (IO Shelley) (CardanoBlock sc)
     -> DBLayer IO
     -> StakePoolLayer
-newStakePoolLayer gp nl db@DBLayer {..} = StakePoolLayer
+newStakePoolLayer gp NetworkLayer{stakeDistribution,currentNodeTip} db@DBLayer {..} =
+    StakePoolLayer
     { getPoolLifeCycleStatus = _getPoolLifeCycleStatus
     , knownPools = _knownPools
     , listStakePools = _listPools
@@ -160,7 +165,7 @@ newStakePoolLayer gp nl db@DBLayer {..} = StakePoolLayer
         tip <- getTip
         let dummyCoin = Coin 0
         res <- runExceptT $ map fst . Map.toList
-            . combineLsqData <$> stakeDistribution nl tip dummyCoin
+            . combineLsqData <$> stakeDistribution tip dummyCoin
         case res of
             Right x -> return x
             Left _e -> return []
@@ -170,7 +175,7 @@ newStakePoolLayer gp nl db@DBLayer {..} = StakePoolLayer
         -> ExceptT ErrNetworkUnavailable IO [Api.ApiStakePool]
     _listPools userStake = do
         tip <- liftIO getTip
-        lsqData <- combineLsqData <$> stakeDistribution nl tip userStake
+        lsqData <- combineLsqData <$> stakeDistribution tip userStake
         dbData <- liftIO $ readPoolDbData db
         return
             . sortOn (Down . (view (#metrics . #nonMyopicMemberRewards)))
@@ -178,8 +183,7 @@ newStakePoolLayer gp nl db@DBLayer {..} = StakePoolLayer
             . Map.toList
             $ combineDbAndLsqData (slotParams gp) lsqData dbData
 
-    gh = getGenesisBlockHash gp
-    getTip = fmap (toPoint gh) . liftIO $ unsafeRunExceptT $ currentNodeTip nl
+    getTip = liftIO $ unsafeRunExceptT currentNodeTip
 
 --
 -- Data Combination functions
@@ -347,9 +351,10 @@ readPoolDbData DBLayer {..} = atomically $ do
 --
 
 monitorStakePools
-    :: Tracer IO StakePoolLog
+    :: forall t sc. (TPraosCrypto sc)
+    => Tracer IO StakePoolLog
     -> GenesisParameters
-    -> NetworkLayer IO t ShelleyBlock
+    -> NetworkLayer IO t (CardanoBlock sc)
     -> DBLayer IO
     -> IO ()
 monitorStakePools tr gp nl db@DBLayer{..} = do
@@ -372,45 +377,48 @@ monitorStakePools tr gp nl db@DBLayer{..} = do
     initCursor = atomically $ readPoolProductionCursor (max 100 k)
       where k = fromIntegral $ getQuantity getEpochStability
 
-    getHeader :: ShelleyBlock -> BlockHeader
-    getHeader = toBlockHeader getGenesisBlockHash
+    getHeader :: CardanoBlock sc -> BlockHeader
+    getHeader = toCardanoBlockHeader gp
 
     forward
-        :: NonEmpty ShelleyBlock
+        :: NonEmpty (CardanoBlock sc)
         -> (BlockHeader, ProtocolParameters)
         -> IO (FollowAction ())
     forward blocks (_nodeTip, _pparams) = do
-        atomically $ forM_ blocks $ \blk -> do
-            let (slot, certificates) = fromShelleyBlock' blk
-            runExceptT (putPoolProduction (getHeader blk) (getProducer blk))
-                >>= \case
-                    Left e ->
-                        liftIO $ traceWith tr $ MsgErrProduction e
-                    Right () ->
-                        pure ()
+        atomically $ forM_ blocks $ \case
+            BlockByron _ -> pure ()
+            BlockShelley blk -> do
+                let (slot, certificates) = poolCertsFromShelleyBlock blk
+                let header = toShelleyBlockHeader getGenesisBlockHash blk
+                runExceptT (putPoolProduction header (getProducer blk))
+                    >>= \case
+                        Left e ->
+                            liftIO $ traceWith tr $ MsgErrProduction e
+                        Right () ->
+                            pure ()
 
-            -- A single block can contain multiple certificates relating to the
-            -- same pool.
-            --
-            -- The /order/ in which certificates appear is /significant/:
-            -- certificates that appear later in a block /generally/ take
-            -- precedence over certificates that appear earlier on.
-            --
-            -- We record /all/ certificates within the database, together with
-            -- the order in which they appeared.
-            --
-            -- Precedence is determined by the 'readPoolLifeCycleStatus'
-            -- function.
-            --
-            let publicationTimes =
-                    CertificatePublicationTime slot <$> [minBound ..]
-            forM_ (publicationTimes `zip` certificates) $ \case
-                (publicationTime, Registration cert) -> do
-                    liftIO $ traceWith tr $ MsgStakePoolRegistration cert
-                    putPoolRegistration publicationTime cert
-                (publicationTime, Retirement cert) -> do
-                    liftIO $ traceWith tr $ MsgStakePoolRetirement cert
-                    putPoolRetirement publicationTime cert
+                -- A single block can contain multiple certificates relating to the
+                -- same pool.
+                --
+                -- The /order/ in which certificates appear is /significant/:
+                -- certificates that appear later in a block /generally/ take
+                -- precedence over certificates that appear earlier on.
+                --
+                -- We record /all/ certificates within the database, together with
+                -- the order in which they appeared.
+                --
+                -- Precedence is determined by the 'readPoolLifeCycleStatus'
+                -- function.
+                --
+                let publicationTimes =
+                        CertificatePublicationTime slot <$> [minBound ..]
+                forM_ (publicationTimes `zip` certificates) $ \case
+                    (publicationTime, Registration cert) -> do
+                        liftIO $ traceWith tr $ MsgStakePoolRegistration cert
+                        putPoolRegistration publicationTime cert
+                    (publicationTime, Retirement cert) -> do
+                        liftIO $ traceWith tr $ MsgStakePoolRetirement cert
+                        putPoolRetirement publicationTime cert
         pure Continue
 
 monitorMetadata

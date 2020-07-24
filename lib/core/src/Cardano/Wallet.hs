@@ -213,7 +213,7 @@ import Cardano.Wallet.Primitive.AddressDerivation
     , preparePassphrase
     )
 import Cardano.Wallet.Primitive.AddressDerivation.Byron
-    ( ByronKey )
+    ( ByronKey, unsafeMkByronKeyFromMasterKey )
 import Cardano.Wallet.Primitive.AddressDerivation.Icarus
     ( IcarusKey )
 import Cardano.Wallet.Primitive.AddressDiscovery
@@ -310,6 +310,8 @@ import Cardano.Wallet.Transaction
     , ErrValidateSelection
     , TransactionLayer (..)
     )
+import Cardano.Wallet.Unsafe
+    ( unsafeXPrv )
 import Control.Exception
     ( Exception )
 import Control.Monad
@@ -375,6 +377,8 @@ import Fmt
     ( blockListF, pretty, (+|), (|+) )
 import GHC.Generics
     ( Generic )
+import GHC.Stack
+    ( HasCallStack )
 import Numeric.Natural
     ( Natural )
 import Safe
@@ -386,6 +390,7 @@ import qualified Cardano.Wallet.Primitive.AddressDiscovery.Random as Rnd
 import qualified Cardano.Wallet.Primitive.AddressDiscovery.Sequential as Seq
 import qualified Cardano.Wallet.Primitive.CoinSelection.Random as CoinSelection
 import qualified Cardano.Wallet.Primitive.Types as W
+import qualified Data.ByteString as BS
 import qualified Data.List as L
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as Map
@@ -642,6 +647,7 @@ walletSyncProgress
     :: forall ctx s t.
         ( HasGenesisData ctx
         , HasNetworkLayer t ctx
+        , HasCallStack
         )
     => ctx
     -> Wallet s
@@ -1279,39 +1285,88 @@ estimateFeeForDelegation ctx wid = db & \DBLayer{..} -> do
 -- transactions will have the effect of migrating all funds from the given
 -- source wallet to the specified target wallet.
 selectCoinsForMigration
-    :: forall ctx s t k.
+    :: forall ctx s t k n.
         ( HasTransactionLayer t k ctx
+        , HasLogger WalletLog ctx
         , HasDBLayer s k ctx
+        , PaymentAddress n ByronKey
         )
     => ctx
     -> WalletId
        -- ^ The source wallet ID.
-    -> ExceptT ErrSelectForMigration IO [CoinSelection]
+    -> ExceptT ErrSelectForMigration IO
+        ( [CoinSelection]
+        , Quantity "lovelace" Natural
+        )
 selectCoinsForMigration ctx wid = do
     (utxo, txp, _) <- withExceptT ErrSelectForMigrationNoSuchWallet $
         selectCoinsSetup @ctx @s @k ctx wid
-    selectCoinsForMigrationFromUTxO @ctx @t @k ctx utxo txp wid
+    selectCoinsForMigrationFromUTxO @ctx @t @k @n ctx utxo txp wid
 
 selectCoinsForMigrationFromUTxO
-    :: forall ctx t k.
+    :: forall ctx t k n.
         ( HasTransactionLayer t k ctx
+        , HasLogger WalletLog ctx
+        , PaymentAddress n ByronKey
         )
     => ctx
     -> W.UTxO
     -> W.TxParameters
     -> WalletId
        -- ^ The source wallet ID.
-    -> ExceptT ErrSelectForMigration IO [CoinSelection]
+    -> ExceptT ErrSelectForMigration IO
+        ( [CoinSelection]
+        , Quantity "lovelace" Natural
+        )
 selectCoinsForMigrationFromUTxO ctx utxo txp wid = do
     let feePolicy@(LinearFee (Quantity a) _ _) = txp ^. #getFeePolicy
-    let feeOptions = (feeOpts tl Nothing feePolicy)
-            { dustThreshold = Coin $ ceiling a }
+    let feeOptions = FeeOptions
+            { estimateFee = minimumFee tl feePolicy Nothing . worstCase
+            , dustThreshold = Coin $ ceiling a
+            , onDanglingChange = if allowUnbalancedTx tl
+                then SaveMoney
+                else PayAndBalance
+            }
     let selOptions = coinSelOpts tl (txp ^. #getTxMaxSize)
+    let previousDistribution = W.computeUtxoStatistics W.log10 utxo
+    liftIO $ traceWith tr $ MsgMigrationUTxOBefore previousDistribution
     case depleteUTxO feeOptions (idealBatchSize selOptions) utxo of
-        cs | not (null cs) -> pure cs
+        cs | not (null cs) -> do
+            let resultDistribution = W.computeStatistics getCoins W.log10 cs
+            liftIO $ traceWith tr $ MsgMigrationUTxOAfter resultDistribution
+            liftIO $ traceWith tr $ MsgMigrationResult cs
+            let leftovers =
+                    W.balance utxo
+                    -
+                    fromIntegral (W.balance' $ concatMap inputs cs)
+            pure (cs, Quantity leftovers)
         _ -> throwE (ErrSelectForMigrationEmptyWallet wid)
   where
     tl = ctx ^. transactionLayer @t @k
+    tr = ctx ^. logger
+
+    getCoins :: CoinSelection -> [Word64]
+    getCoins CoinSelection{change,outputs} =
+        (getCoin <$> change) ++ (getCoin . coin <$> outputs)
+
+    -- When performing a selection for migration, at this stage, we do not know
+    -- exactly to which address we're going to assign which change. It could be
+    -- an Icarus address, a Byron address or anything else. But, depending on
+    -- the address, we get to pay more-or-less as fees!
+    --
+    -- Therefore, we assume the worse, which are byron payment addresses, this
+    -- will create __slightly__ overpriced selections but.. meh.
+    worstCase :: CoinSelection -> CoinSelection
+    worstCase cs = cs
+        { change = mempty
+        , outputs = TxOut worstCaseAddress <$> change cs
+        }
+      where
+        worstCaseAddress :: Address
+        worstCaseAddress = paymentAddress @n @ByronKey $ publicKey $
+            unsafeMkByronKeyFromMasterKey
+                (minBound, minBound)
+                (unsafeXPrv $ BS.replicate 128 0)
 
 -- | Estimate fee for 'selectCoinsForPayment'.
 estimateFeeForPayment
@@ -2251,6 +2306,9 @@ data WalletLog
     | MsgPaymentCoinSelectionStart W.UTxO W.TxParameters (NonEmpty TxOut)
     | MsgPaymentCoinSelection CoinSelection
     | MsgPaymentCoinSelectionAdjusted CoinSelection
+    | MsgMigrationUTxOBefore UTxOStatistics
+    | MsgMigrationUTxOAfter UTxOStatistics
+    | MsgMigrationResult [CoinSelection]
     | MsgRewardBalanceQuery BlockHeader
     | MsgRewardBalanceResult (Either ErrFetchRewards (Quantity "lovelace" Word64))
     | MsgRewardBalanceNoSuchWallet ErrNoSuchWallet
@@ -2309,6 +2367,12 @@ instance ToText WalletLog where
             "Coins selected for payment: \n" <> pretty sel
         MsgPaymentCoinSelectionAdjusted sel ->
             "Coins after fee adjustment: \n" <> pretty sel
+        MsgMigrationUTxOBefore summary ->
+            "About to migrate the following distribution: \n" <> pretty summary
+        MsgMigrationUTxOAfter summary ->
+            "Expected distribution after complete migration: \n" <> pretty summary
+        MsgMigrationResult cs ->
+            "Migration plan: \n" <> pretty (blockListF cs)
         MsgRewardBalanceQuery bh ->
             "Updating the reward balance for block " <> pretty bh
         MsgRewardBalanceResult (Right amt) ->
@@ -2340,6 +2404,9 @@ instance HasSeverityAnnotation WalletLog where
         MsgPaymentCoinSelectionStart{} -> Debug
         MsgPaymentCoinSelection _ -> Debug
         MsgPaymentCoinSelectionAdjusted _ -> Debug
+        MsgMigrationUTxOBefore _ -> Info
+        MsgMigrationUTxOAfter _ -> Info
+        MsgMigrationResult _ -> Debug
         MsgIsStakeKeyRegistered _ -> Info
         MsgRewardBalanceQuery _ -> Debug
         MsgRewardBalanceResult (Right _) -> Debug
