@@ -58,10 +58,11 @@ x-epochInfo: &epochInfo
   type: object
   required:
     - epoch_number
-    - epoch_start_time
   properties:
     epoch_number: *epochNumber
-    epoch_start_time: *date
+    epoch_start_time:
+      <<: *date
+      description: May be omitted when the node is not in sync in the Byron era.
 
 x-blockId: &blockId
   description: The hash of genesis block
