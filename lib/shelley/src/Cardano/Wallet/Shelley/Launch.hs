@@ -1122,6 +1122,33 @@ operators = unsafePerformIO $ newMVar
           , "homepage" .= Aeson.String "https://iohk.io"
           ]
       )
+    , ( PoolId $ unsafeFromHex
+          "83c86ee6a465e9ca31d85627f35d8d86bf0b73436f16c5ffd398ab62"
+      , Aeson.object
+          [ "type" .= Aeson.String "StakeVerificationKeyShelley_ed25519"
+          , "description" .= Aeson.String "Stake Verification Key"
+          , "cborHex" .= Aeson.String
+              "58202f99caeb0f64696ffdf1721351f24ac72acfac1674870ef3eed39edafba70236"
+          ]
+      , Aeson.object
+          [ "type" .= Aeson.String "StakeSigningKeyShelley_ed25519"
+          , "description" .= Aeson.String "Stake Signing Key"
+          , "cborHex" .= Aeson.String
+              "582031dff1a162c48941fb6aedc1b77c656f3de01b4beea53b828ff0e42a7d349f4e"
+          ]
+      , Aeson.object
+          [ "type" .= Aeson.String "NodeOperationalCertificateIssueCounter"
+          , "description" .= Aeson.String "Next certificate issue number: 0"
+          , "cborHex" .= Aeson.String
+              "82005820a93443bbfe7f09c4b4aea30e819b9176495e037538d6f009810f491de22b4d58"
+          ]
+      , Aeson.object
+          [ "name" .= Aeson.String "Genesis Pool D"
+          , "ticker" .= Aeson.String "GPD"
+          , "description" .= Aeson.String "Lorem Ipsum Dolor Sit Amet."
+          , "homepage" .= Aeson.String "https://iohk.io"
+          ]
+      )
     ]
 {-# NOINLINE operators #-}
 
