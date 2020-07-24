@@ -16,10 +16,10 @@ import Cardano.Wallet.Gen
 import Cardano.Wallet.Primitive.Slotting
     ( Qry
     , SlotParameters
+    , endTimeOfEpoch
     , epochOf
     , firstSlotInEpoch
     , flatSlot
-    , forecastFutureEpochStartUsingTip
     , fromFlatSlot
     , singleEraInterpreter
     , slotParams
@@ -90,12 +90,12 @@ spec = do
 
                     res === legacy
 
-        it "forecastFutureEpochStartUsingTip matches (startTime =<< firstSlotInEpoch)\
+        it "endTimeOfEpoch e == (startTime =<< firstSlotInEpoch (e + 1)) \
            \ (always true useing singleEraInterpreter)"
-            $ withMaxSuccess 10000 $ property $ \gp tip e -> do
+            $ withMaxSuccess 10000 $ property $ \gp e -> do
                 let run = runIdentity . singleEraInterpreter gp
-                run (forecastFutureEpochStartUsingTip tip e)
-                    === run (startTime =<< firstSlotInEpoch e)
+                run (endTimeOfEpoch e)
+                    === run (startTime =<< firstSlotInEpoch (e + 1))
 legacySlottingTest
     :: (Eq a, Show a)
     => (SlotParameters -> SlotId -> a)
