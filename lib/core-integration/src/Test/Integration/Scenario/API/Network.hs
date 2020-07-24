@@ -23,6 +23,8 @@ import Control.Monad
     ( when )
 import Control.Monad.IO.Class
     ( liftIO )
+import Data.Foldable
+    ( traverse_ )
 import Data.Time.Clock
     ( getCurrentTime )
 import Test.Hspec
@@ -56,8 +58,9 @@ spec = do
             r <- request @ApiNetworkInformation ctx
                 Link.getNetworkInfo Default Empty
             expectResponseCode @IO HTTP.status200 r
+            i <- getFromResponse id r
             verify r
-                [ expectField #nextEpoch ((.> now) . epochStartTime)
+                [ expectField #nextEpoch (\x -> (epochStartTime <$> x) .> Just now)
                 , expectField (#syncProgress . #getApiT) (`shouldBe` Ready)
                 ]
             return r
