@@ -183,7 +183,7 @@ spec = do
             }) (Right $ FeeOutput
             { csInps = [20,20,20]
             , csOuts = [14,18,19]
-            , csChngs = [4,1,1]
+            , csChngs = [4,2]
             })
 
         -- Cannot cover fee, no extra inputs
@@ -507,8 +507,9 @@ propDivvyFeeInvariantEmptyList (fee, outs) =
 prop_rebalanceSelection
     :: CoinSelection
     -> OnDanglingChange
+    -> Coin
     -> Property
-prop_rebalanceSelection sel onDangling = do
+prop_rebalanceSelection sel onDangling threshold = do
     let (sel', fee') = rebalanceSelection opts sel
 
     let selectionIsBalanced = case onDangling of
@@ -520,10 +521,14 @@ prop_rebalanceSelection sel onDangling = do
     let equalityModuloChange =
             sel { change = [] } == sel' { change = [] }
 
+    let noDust =
+            all (>= threshold') (change sel')
+
     conjoin
         [ fee' == Fee 0 ==> selectionIsBalanced
         , selectionIsBalanced ==> not (null (inputs sel'))
         , selectionIsBalanced ==> isValidSelection sel'
+        , property noDust
         , property equalityModuloChange
         ]
         & counterexample (unlines
@@ -551,16 +556,42 @@ prop_rebalanceSelection sel onDangling = do
         -
         fromIntegral (outputBalance s + changeBalance s)
 
+    -- NOTE: We only allow non-null dust threshold if 'onDangling' is
+    -- set to 'SaveMoney'.
+    threshold' =
+        case onDangling of
+            SaveMoney ->
+                threshold
+
+            PayAndBalance ->
+                Coin 0
+
     opts = FeeOptions
-        -- NOTE
-        -- Dummy fee policy but, following a similar rule as the fee policy on
-        -- Byron / Shelley (bigger transaction cost more) with sensible values.
         { estimateFee = \cs ->
-            let
-                size = fromIntegral $ length $ show cs
-            in
-                Fee (100000 + 100 * size)
-        , dustThreshold = minBound
+            case onDangling of
+                -- NOTE
+                -- Dummy fee policy but, following a similar rule as the fee
+                -- policy on Byron / Shelley (bigger transaction cost more) with
+                -- sensible values.
+                SaveMoney ->
+                    let
+                        size = fromIntegral $ length $ show cs
+                    in
+                        Fee (100000 + 100 * size)
+
+                -- NOTE
+                -- Dummy fee policy but, following a similar rule as the fee
+                -- policy on Jormungandr. More inputs/outputs cost more.
+                PayAndBalance ->
+                    let
+                        ios = fromIntegral
+                            $ length (inputs cs)
+                            + length (outputs cs)
+                            + length (change cs)
+                    in
+                        Fee (100000 + 100 * ios)
+
+        , dustThreshold = threshold'
         , onDanglingChange = onDangling
         }
 
