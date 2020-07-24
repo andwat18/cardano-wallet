@@ -19,6 +19,7 @@ import Cardano.Wallet.Primitive.Slotting
     , epochOf
     , firstSlotInEpoch
     , flatSlot
+    , forecastFutureEpochStartUsingTip
     , fromFlatSlot
     , singleEraInterpreter
     , slotParams
@@ -58,7 +59,7 @@ import Test.Utils.Time
 
 spec :: Spec
 spec = do
-    describe "slotting" $
+    describe "slotting" $ do
         describe "runQuery NEW singleEraInterpreter == OLD . fromFlatSlot" $ do
             it "epochOf and epochNumber"
                 $  property $ legacySlottingTest (\_ s -> epochNumber s) epochOf
@@ -88,6 +89,13 @@ spec = do
                     let legacy = SlotNo $ flatSlot (getEpochLength gp) $ SlotId e 0
 
                     res === legacy
+
+        it "forecastFutureEpochStartUsingTip matches (startTime =<< firstSlotInEpoch)\
+           \ (always true useing singleEraInterpreter)"
+            $ withMaxSuccess 10000 $ property $ \gp tip e -> do
+                let run = runIdentity . singleEraInterpreter gp
+                run (forecastFutureEpochStartUsingTip tip e)
+                    === run (startTime =<< firstSlotInEpoch e)
 legacySlottingTest
     :: (Eq a, Show a)
     => (SlotParameters -> SlotId -> a)
